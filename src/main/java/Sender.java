@@ -4,26 +4,15 @@ import javax.swing.event.DocumentListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class User1 extends JFrame {
+public class Sender extends JFrame {
     protected JTextArea text;
     protected JLabel label ;
     protected JScrollPane scrollable;
     protected JTextField message = new JTextField("");
-    public void sending (){
-        message.setText("Your message is being sent ...");
-        String contant = text.getText();
-        SendingProcess sender = new SendingProcess("editeur1", contant);
-        sender.send();
-        message.setBounds(300, 10, 200 ,30);
-        message.setBorder(null);
-        message.setEditable(false);
-        add(message);
-    }
-    public void endSending(){
-        message.setText("");
-    }
-    public User1(){
-        super("User One Prompt");
+    protected String sendingQueue;
+    public Sender(String sendingQueue, String promptTitle){
+        super(promptTitle);
+        this.sendingQueue=sendingQueue;
         text = new JTextArea();
         label = new JLabel("Write something here !");
         scrollable = new JScrollPane(text);
@@ -69,8 +58,17 @@ public class User1 extends JFrame {
         setSize(800,400);
         setResizable(false);
     }
-
-    public static void main(String[] args) {
-        new User1();
+    public void sending (){
+        message.setText("Your message is being sent ...");
+        String contant = text.getText();
+        SendingProcess sender = new SendingProcess(sendingQueue, contant);
+        sender.send();
+        message.setBounds(300, 10, 200 ,30);
+        message.setBorder(null);
+        message.setEditable(false);
+        add(message);
+    }
+    public void endSending(){
+        message.setText("");
     }
 }

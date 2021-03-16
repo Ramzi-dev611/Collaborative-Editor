@@ -46,7 +46,7 @@ public class Sender extends JFrame {
                 endSending();
             }
         });
-        scrollable.setBounds(240,50,300,150);
+        scrollable.setBounds(240,50,400,150);
         scrollable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollable.setVisible(true);
         label.setLabelFor(text);
@@ -55,14 +55,11 @@ public class Sender extends JFrame {
         add(label);
         setLayout(null);
         setVisible(true);
-        setSize(800,400);
-        setResizable(false);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        pack();
     }
     public void sending (){
         message.setText("Your message is being sent ...");
-        String contant = text.getText();
-        SendingProcess sender = new SendingProcess(sendingQueue, contant);
-        sender.send();
         message.setBounds(300, 10, 200 ,30);
         message.setBorder(null);
         message.setEditable(false);
@@ -70,5 +67,7 @@ public class Sender extends JFrame {
     }
     public void endSending(){
         message.setText("");
+        SendingProcess sender = new SendingProcess(sendingQueue, text.getText());
+        sender.send();
     }
 }

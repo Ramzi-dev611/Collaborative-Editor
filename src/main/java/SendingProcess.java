@@ -17,7 +17,6 @@ public class SendingProcess {
             channel.queueDeclare(this.queue,false,false,false,null);
 
             channel.basicPublish("",this.queue,null, this.message.getBytes());
-            System.out.println(" [x] sent '"+message+" '");
         } catch (Exception e) {
             e.printStackTrace();
         }

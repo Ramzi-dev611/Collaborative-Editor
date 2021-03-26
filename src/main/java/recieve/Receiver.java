@@ -1,3 +1,5 @@
+package recieve;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,7 +26,7 @@ public class Receiver extends JFrame {
         scroll1.setBounds(5, 100, 1352, 250);
         scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         ReceiveProcess rp = new ReceiveProcess();
-        rp.recieve("Sender1", firstText);
+        rp.recieve("send.Sender1", firstText);
         pan1.add(first);
         pan1.add(scroll1);
 
@@ -40,7 +42,7 @@ public class Receiver extends JFrame {
         secondText.setFont(new Font("Comic Sans", Font.PLAIN, 22));
         secondText.setBounds(5, 100, 1352, 250);
         ReceiveProcess rp = new ReceiveProcess();
-        rp.recieve("Sender2", secondText);
+        rp.recieve("send.Sender2", secondText);
         pan2.add(second);
         pan2.add(secondText);
     }

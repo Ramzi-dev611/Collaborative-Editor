@@ -1,16 +1,16 @@
+package send;
+
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class Sender1 extends JFrame implements FocusListener, ActionListener, DocumentListener {
+public class Sender extends JFrame implements FocusListener, ActionListener, DocumentListener {
     // components of first Zone
     protected String name;
     protected JPanel pan1;
@@ -25,7 +25,7 @@ public class Sender1 extends JFrame implements FocusListener, ActionListener, Do
     protected JButton submition;
     // Components of the third zone
     protected JPanel pan3; protected JTextArea field;
-    public Sender1(String name){
+    public Sender(String name){
         this.name = name;
         // This is the header of the frame
         constructZone1();
@@ -43,27 +43,6 @@ public class Sender1 extends JFrame implements FocusListener, ActionListener, Do
         this.add(pan3, BorderLayout.CENTER);
         this.setVisible(true);
     }
-    @Override
-    public void focusGained(FocusEvent e) {
-        if(e.getSource()==insertion){
-            if(insertion.getForeground()== Color.gray){
-                insertion.setText("");
-                insertion.setForeground(Color.black);
-            }
-        }
-    }
-
-    @Override
-    public void focusLost(FocusEvent e) {
-        if(e.getSource()==insertion){
-            if(insertion.getText().equals("")){
-                insertion.setText("Name your new room");
-                insertion.setForeground(Color.gray);
-            }
-        }
-
-    }
-
     private  void constructZone1(){
         pan1 = new JPanel();
         title= new JLabel("Welcome "+name+" To the Collaborative Editor!");
@@ -147,6 +126,27 @@ public class Sender1 extends JFrame implements FocusListener, ActionListener, Do
     }
 
     @Override
+    public void focusGained(FocusEvent e) {
+        if(e.getSource()==insertion){
+            if(insertion.getForeground()== Color.gray){
+                insertion.setText("");
+                insertion.setForeground(Color.black);
+            }
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        if(e.getSource()==insertion){
+            if(insertion.getText().equals("")){
+                insertion.setText("Name your new room");
+                insertion.setForeground(Color.gray);
+            }
+        }
+
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==room){
             if(field.isEditable() == false){
@@ -160,17 +160,11 @@ public class Sender1 extends JFrame implements FocusListener, ActionListener, Do
         }
     }
 
-    public static void main (String []args){
-        new Sender1("Sender1");
-    }
-
     @Override
     public void insertUpdate(DocumentEvent e) {
-
             String message = field.getText();
             SendProcess snd = new SendProcess();
             snd.send(name, message);
-
     }
 
     @Override

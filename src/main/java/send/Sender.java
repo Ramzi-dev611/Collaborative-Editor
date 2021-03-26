@@ -1,5 +1,7 @@
 package send;
 
+import recieve.ReceiveProcess;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -12,31 +14,25 @@ import java.awt.event.FocusListener;
 
 public class Sender extends JFrame implements FocusListener, ActionListener, DocumentListener {
     protected SendProcess snd;
-    // components of first Zone
     protected String name;
     protected JPanel pan1;
     protected JLabel title;
     protected JLabel logo;
-    // Components of the second zone
     protected JPanel pan2;
     protected JPanel firstBlock;
     protected JPanel secondBlock;
     protected JButton room;
     protected JTextField insertion;
     protected JButton submition;
-    // Components of the third zone
     protected JPanel pan3;
     protected JTextArea field;
+    protected JTextArea other;
     public Sender(String name){
         this.name = name;
         snd = new SendProcess("application"+name);
-        // This is the header of the frame
         constructZone1();
-        // This is the zone of the available Rooms
         constructZone2();
-        // This is the zone of the Edition
         constructZone3();
-        //frame Construction
         this.setTitle(name);
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -120,11 +116,18 @@ public class Sender extends JFrame implements FocusListener, ActionListener, Doc
         field.setEditable(false);
         field.setLineWrap(true);
         field.getDocument().addDocumentListener(this);
-        JScrollPane scroll = new JScrollPane(field);
-        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        other = new JTextArea();
+        other.setEditable(false);other.setLineWrap(true);
+        other.setFont(new Font("Helvetica",Font.PLAIN, 25));
+        new ReceiveProcess().recieve((name.equals("Ahmed"))?"applicationAli":"applicationAhmed", other);
+        JScrollPane scroll1 = new JScrollPane(field);
+        scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        JScrollPane scroll2 = new JScrollPane(other);
+        scroll2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pan3.setBorder(new EmptyBorder(15,15,15,15));
-        pan3.setLayout(new BorderLayout());
-        pan3.add(scroll);
+        pan3.setLayout(new GridLayout(2,1,20,20));
+        pan3.add(scroll1);
+        pan3.add(scroll2);
         pan3.setPreferredSize(new Dimension(100,100));
     }
 

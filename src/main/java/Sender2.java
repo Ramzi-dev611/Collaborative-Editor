@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class Sender2 extends JFrame implements FocusListener, ActionListener {
+public class Sender2 extends JFrame implements FocusListener, ActionListener, DocumentListener {
     // components of first Zone
     protected String name;
     protected JPanel pan1;
@@ -135,6 +137,7 @@ public class Sender2 extends JFrame implements FocusListener, ActionListener {
         field.setFont(new Font("Helvetica",Font.PLAIN, 25));
         field.setEditable(false);
         field.setLineWrap(true);
+        field.getDocument().addDocumentListener(this);
         pan3.setBorder(new EmptyBorder(15,15,15,15));
         pan3.setLayout(new BorderLayout());
         JScrollPane scroll = new JScrollPane(field);
@@ -151,13 +154,34 @@ public class Sender2 extends JFrame implements FocusListener, ActionListener {
                 room.setBackground(Color.green);
                 field.grabFocus();
             }else{
-                SendProcess sender = new SendProcess();
-                sender.Send(room.getText(), field.getText());
+                field.setEditable(false);
+                room.setBackground(new Color (0x6b6f80));
             }
         }
     }
 
     public static void main (String []args){
         new Sender2("Sender2");
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        String message = field.getText();
+        SendProcess snd = new SendProcess();
+        snd.send(name, message);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        String message = field.getText();
+        SendProcess snd = new SendProcess();
+        snd.send(name, message);
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        String message = field.getText();
+        SendProcess snd = new SendProcess();
+        snd.send(name, message);
     }
 }

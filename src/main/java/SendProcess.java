@@ -3,7 +3,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 public class SendProcess {
-    public void Send(String queue, String message){
+    public void send(String queue, String message){
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         try (

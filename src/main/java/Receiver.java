@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Reciever extends JFrame {
+public class Receiver extends JFrame {
     protected JLabel first;
     protected JLabel second;
     protected JTextArea firstText;
@@ -23,7 +23,7 @@ public class Reciever extends JFrame {
         JScrollPane scroll1 = new JScrollPane(firstText);
         scroll1.setBounds(5, 100, 1352, 250);
         scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        RecieveProcess rp = new RecieveProcess();
+        ReceiveProcess rp = new ReceiveProcess();
         rp.recieve("Sender1", firstText);
         pan1.add(first);
         pan1.add(scroll1);
@@ -39,13 +39,13 @@ public class Reciever extends JFrame {
         secondText.setEditable(false);
         secondText.setFont(new Font("Comic Sans", Font.PLAIN, 22));
         secondText.setBounds(5, 100, 1352, 250);
-        RecieveProcess rp = new RecieveProcess();
+        ReceiveProcess rp = new ReceiveProcess();
         rp.recieve("Sender2", secondText);
         pan2.add(second);
         pan2.add(secondText);
     }
 
-    public Reciever(){
+    public Receiver(){
         constructZone1();
         constructZone2();
         setExtendedState(MAXIMIZED_BOTH);
@@ -56,6 +56,6 @@ public class Reciever extends JFrame {
         setVisible(true);
     }
     public static void main(String args[]){
-        new Reciever();
+        new Receiver();
     }
 }

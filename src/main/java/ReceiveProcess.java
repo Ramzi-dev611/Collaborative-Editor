@@ -5,7 +5,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import javax.swing.*;
 
-public class RecieveProcess {
+public class ReceiveProcess {
     public void recieve(String queue, JTextArea text){
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");

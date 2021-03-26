@@ -9,7 +9,7 @@ you can send messages to a receiver.
 - has a 2 uneditable textareas to receive messages
 
 // Question2
-functionality stays the same (Class send.SendProcess, recieve.ReceiveProcess)
+functionality stays the same (Class SendProcess, recieve.ReceiveProcess)
 adding a Document Listener to the fields where the users can type what they want to send
 the button room when clicked for a second time transform the textarea to uneditable
 

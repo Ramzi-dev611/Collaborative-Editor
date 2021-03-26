@@ -1,5 +1,3 @@
-package send;
-
 import recieve.ReceiveProcess;
 
 import javax.swing.*;

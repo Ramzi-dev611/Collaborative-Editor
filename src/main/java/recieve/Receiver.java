@@ -2,59 +2,52 @@ package recieve;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Receiver extends JFrame {
-    protected JLabel first;
-    protected JLabel second;
-    protected JTextArea firstText;
-    protected JTextArea secondText;
-    protected JPanel pan1;
-    protected JPanel pan2;
+    protected ArrayList<JLabel> labs;
+    protected ArrayList<JTextArea> fields;
+    protected ArrayList<JPanel> pans;
+    protected ArrayList<String> queues;
 
-    private void constructZone1(){
-        pan1 = new JPanel();
-        pan1.setBackground(new Color(0xcce6ff));
-        pan1.setLayout(null);
-        first = new JLabel("firstUser Said");
-        first.setFont(new Font("Helvetica", Font.ITALIC, 32));
-        first.setBounds(580, 20, 300, 75);
-        firstText= new JTextArea();
-        firstText.setEditable(false);
-        firstText.setLineWrap(true);
-        firstText.setFont(new Font("Comic Sans", Font.PLAIN, 22));
-        JScrollPane scroll1 = new JScrollPane(firstText);
-        scroll1.setBounds(5, 100, 1352, 250);
-        scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        ReceiveProcess rp = new ReceiveProcess();
-        rp.recieve("send.Sender1", firstText);
-        pan1.add(first);
-        pan1.add(scroll1);
 
-    } protected void constructZone2(){
-        pan2 = new JPanel();
-        pan2.setBackground(new Color(0xcce6ff));
-        pan2.setLayout(null);
-        second = new JLabel("secondUser Said");
-        second.setFont(new Font("Helvetica", Font.ITALIC, 32));
-        second.setBounds(580, 20, 300, 75);
-        secondText= new JTextArea();
-        secondText.setEditable(false);
-        secondText.setFont(new Font("Comic Sans", Font.PLAIN, 22));
-        secondText.setBounds(5, 100, 1352, 250);
-        ReceiveProcess rp = new ReceiveProcess();
-        rp.recieve("send.Sender2", secondText);
-        pan2.add(second);
-        pan2.add(secondText);
+    private void constructZone(int index){
+        JLabel l = new JLabel("User "+(index+1)+ " said");
+        l.setFont(new Font("Boli MV",Font.ITALIC, 20));
+        l.setPreferredSize(new Dimension(15,50));
+        l.setHorizontalTextPosition(SwingConstants.CENTER);
+        labs.add(l);
+
+        JTextArea t = new JTextArea();
+        t.setEditable(false);t.setLineWrap(true);
+        t.setFont(new Font("Helvatica", Font.PLAIN, 22));
+        new ReceiveProcess().recieve((String)queues.toArray()[index], t);
+        fields.add(t);
+        JScrollPane scroll = new JScrollPane(t);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        JPanel p = new JPanel();
+        p.setBackground(new Color(0xc7caf0));
+        p.setLayout(new BorderLayout(15,15));
+        p.add(l, BorderLayout.NORTH);
+        p.add(scroll, BorderLayout.CENTER);
+        pans.add(p);
     }
 
     public Receiver(){
-        constructZone1();
-        constructZone2();
-        setExtendedState(MAXIMIZED_BOTH);
+        QueuesFactory fact = new QueuesFactory();
+        queues = fact.getQueus();
+        labs = new ArrayList<>(queues.size());
+        fields = new ArrayList<>(queues.size());
+        pans = new ArrayList<>(queues.size());
+        for (int i =0; i< queues.size(); i++){
+            constructZone(i);
+        }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridLayout(2,1,0,20));
-        add(pan1);
-        add(pan2);
+        setExtendedState(MAXIMIZED_BOTH);
+        setLayout(new GridLayout(1,queues.size(), 20, 20));
+        for (JPanel p : pans){
+            add(p);
+        }
         setVisible(true);
     }
     public static void main(String args[]){

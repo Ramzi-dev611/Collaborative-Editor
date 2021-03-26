@@ -11,6 +11,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class Sender extends JFrame implements FocusListener, ActionListener, DocumentListener {
+    protected SendProcess snd;
     // components of first Zone
     protected String name;
     protected JPanel pan1;
@@ -24,9 +25,11 @@ public class Sender extends JFrame implements FocusListener, ActionListener, Doc
     protected JTextField insertion;
     protected JButton submition;
     // Components of the third zone
-    protected JPanel pan3; protected JTextArea field;
+    protected JPanel pan3;
+    protected JTextArea field;
     public Sender(String name){
         this.name = name;
+        snd = new SendProcess("application"+name);
         // This is the header of the frame
         constructZone1();
         // This is the zone of the available Rooms
@@ -163,23 +166,20 @@ public class Sender extends JFrame implements FocusListener, ActionListener, Doc
     @Override
     public void insertUpdate(DocumentEvent e) {
             String message = field.getText();
-            SendProcess snd = new SendProcess();
-            snd.send(name, message);
+            snd.send(message);
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
             String message = field.getText();
-            SendProcess snd = new SendProcess();
-            snd.send(name, message);
+            snd.send(message);
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
         if(e.getDocument() == field){
             String message = field.getText();
-            SendProcess snd = new SendProcess();
-            snd.send(name, message);
+            snd.send(message);
         }
     }
 }

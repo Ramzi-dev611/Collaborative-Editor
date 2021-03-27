@@ -32,7 +32,7 @@ public class WelcomeFrame extends JFrame implements FocusListener {
                 err.setVisible(true);
             }else {
                 this.dispose();
-                new Sender(name);
+                new Sender(name, "");
             }
         });
         connect.setBounds(160,300, 100, 50);

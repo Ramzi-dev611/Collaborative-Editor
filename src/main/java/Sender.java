@@ -1,3 +1,4 @@
+import recieve.QueuesFactory;
 import recieve.ReceiveProcess;
 
 import javax.swing.*;
@@ -9,28 +10,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class Sender extends JFrame implements FocusListener, ActionListener, DocumentListener {
+public class Sender extends JFrame implements FocusListener, DocumentListener {
     protected SendProcess snd;
     protected String name;
     protected JPanel pan1;
     protected JLabel title;
     protected JLabel logo;
+    protected JLabel block3lab;
     protected JPanel pan2;
     protected JPanel firstBlock;
     protected JPanel secondBlock;
+    protected JPanel thirdBlock;
     protected JButton room;
+    protected JButton addWriters;
     protected JTextField insertion;
     protected JButton submition;
     protected JPanel pan3;
     protected JTextArea field;
-    protected JTextArea other;
-    public Sender(String name){
+    protected ArrayList <String> othersQueues;
+    protected ArrayList<JTextArea> otherAreas;
+    protected ArrayList<JLabel> otherLabels;
+    protected ArrayList<JPanel> otherPanels;
+    protected JPanel othersPan;
+    public Sender(String name, String old){
         this.name = name;
         snd = new SendProcess("application"+name);
         constructZone1();
         constructZone2();
-        constructZone3();
+        constructZone3(old);
         this.setTitle(name);
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -91,42 +101,106 @@ public class Sender extends JFrame implements FocusListener, ActionListener, Doc
         room.setForeground(Color.white);
         room.setBackground(new Color (0x6b6f80));
         room.setBounds(50,50, 200, 40);
-        room.addActionListener(this);
+        room.addActionListener(e->{
+            if(field.isEditable() == false){
+                field.setEditable(true);
+                room.setBackground(Color.green);
+                field.grabFocus();
+            }else{
+                field.setEditable(false);
+                room.setBackground(new Color (0x6b6f80));
+            }
+        });
         //secondBlock
         secondBlock= new JPanel();
         secondBlock.setBackground(new Color(0xb3ffb3));
-        secondBlock.setBounds(0, 150, 300, 1000);
+        secondBlock.setBounds(0, 150, 300, 150);
         secondBlock.setLayout(null);
         secondBlock.add(room);
         secondBlock.add(lab2);
+        //block3Lab
+        block3lab = new JLabel("Check for other users");
+        //addWriters
+        addWriters = new JButton("Add Writers");
+        addWriters.setFocusable(false);
+        addWriters.setBackground(Color.red);
+        addWriters.setForeground(Color.white);
+        addWriters.addActionListener(e->{
+            dispose();
+            new TmpFrame(field.getText(), name);
+        });
+        //Block 3
+        thirdBlock = new JPanel();
+        thirdBlock.setBackground(new Color(0xb3ffb3));
+        thirdBlock.setBounds(0, 543, 300, 50);
+        thirdBlock.setLayout(new BorderLayout());
+        thirdBlock.add(block3lab, BorderLayout.NORTH);
+        thirdBlock.add(addWriters, BorderLayout.CENTER);
+
         //pan
         pan2.setBackground(new Color(0xb3ffb3));
         pan2.setLayout(null);
         pan2.add(firstBlock);
         pan2.add(secondBlock);
+        pan2.add(thirdBlock);
         pan2.setPreferredSize(new Dimension(300,0));
     }
 
-    private void constructZone3(){
+    private void constructZone3(String o){
         pan3 = new JPanel();
         field = new JTextArea();
         field.setFont(new Font("Helvetica",Font.PLAIN, 25));
         field.setEditable(false);
         field.setLineWrap(true);
+        field.setText(o);
         field.getDocument().addDocumentListener(this);
-        other = new JTextArea();
-        other.setEditable(false);other.setLineWrap(true);
-        other.setFont(new Font("Helvetica",Font.PLAIN, 25));
-        new ReceiveProcess().recieve((name.equals("Ahmed"))?"applicationAli":"applicationAhmed", other);
         JScrollPane scroll1 = new JScrollPane(field);
         scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        JScrollPane scroll2 = new JScrollPane(other);
-        scroll2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pan3.setBorder(new EmptyBorder(15,15,15,15));
         pan3.setLayout(new GridLayout(2,1,20,20));
         pan3.add(scroll1);
-        pan3.add(scroll2);
+        constructOther();
         pan3.setPreferredSize(new Dimension(100,100));
+    }
+
+    private void constructOther(){
+        othersQueues = new ArrayList<String>();
+        ArrayList<String> tmp = new QueuesFactory().getQueus();
+        for (Iterator<String> it = tmp.iterator(); it.hasNext();){
+            String q = it.next();
+            if(q.matches("application.*") && !q.equals("application"+name)){
+                othersQueues.add(q);
+            }
+        }
+        int sz =  othersQueues.size();
+        otherPanels = new ArrayList<JPanel>(sz);
+        otherLabels = new ArrayList<JLabel>(sz);
+        otherAreas = new ArrayList<JTextArea>(sz);
+        othersPan = new JPanel();
+        othersPan.setLayout(new GridLayout(1, sz,10,0));
+        for (int index=0; index< sz; index++){
+            JLabel l = new JLabel("User "+(String)othersQueues.toArray()[index]+ " said");
+            l.setFont(new Font("Boli MV",Font.ITALIC, 20));
+            l.setPreferredSize(new Dimension(15,50));
+            l.setHorizontalTextPosition(SwingConstants.CENTER);
+            otherLabels.add(l);
+            JTextArea other = new JTextArea();
+            other.setEditable(false);
+            other.setLineWrap(true);
+            other.setFont(new Font("Helvetica",Font.PLAIN, 25));
+            new ReceiveProcess().recieve((String)othersQueues.toArray()[index], other);
+            JScrollPane scroll = new JScrollPane(other);
+            scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            otherAreas.add(other);
+            JPanel p = new JPanel();
+            p.setBackground(new Color(0xc7caf0));
+            p.setLayout(new BorderLayout());
+            p.add(l, BorderLayout.NORTH);
+            p.add(scroll, BorderLayout.CENTER);
+            otherPanels.add(p);
+            othersPan.add(p);
+        }
+        pan3.add(othersPan);
     }
 
     @Override
@@ -150,19 +224,6 @@ public class Sender extends JFrame implements FocusListener, ActionListener, Doc
 
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==room){
-            if(field.isEditable() == false){
-                field.setEditable(true);
-                room.setBackground(Color.green);
-                field.grabFocus();
-            }else{
-                field.setEditable(false);
-                room.setBackground(new Color (0x6b6f80));
-            }
-        }
-    }
 
     @Override
     public void insertUpdate(DocumentEvent e) {

@@ -28,4 +28,4 @@ one for it to write and an other one to see the other sender text
 than for the 5th question a multi uneditable text areas being constructed the same way as for the question  3
 a problem occurs : when Sender 1 is logged in and if sender2 joins after him
 sender2's zone doesn't appear in for sender1
-to solve this issue I created a process that sender1 takes to refresh his frame
+to solve this issue I created a process that sender1 takes to refresh his frame:q

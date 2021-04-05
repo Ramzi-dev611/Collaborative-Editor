@@ -46,6 +46,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
         this.add(pan3, BorderLayout.CENTER);
         this.setVisible(true);
     }
+
     private  void constructZone1(){
         pan1 = new JPanel();
         title= new JLabel("Welcome "+name+" To the Collaborative Editor!");
@@ -155,7 +156,6 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                     field.setEditable(true);
                     b.setBackground(Color.green);
                     currentRoom = b;
-                    field.grabFocus();
                 }else{
                     if(currentRoom == b){
                         field.setEditable(false);
@@ -170,6 +170,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                         snd.bindToExchange("application"+b.getText());
                     }
                 }
+                field.grabFocus();
             });
             rooms.add(b);
             roomsPan.add(b);
@@ -192,7 +193,40 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
         refresh.setBackground(Color.red);
         refresh.setForeground(Color.white);
         refresh.setFocusable(false);
-        refresh.addActionListener(e->{});
+        refresh.addActionListener(e->{
+            ArrayList<String> tmp = snd.getExchanges();
+            for (String i : tmp){
+                if(!roomsExchanges.contains(i)){
+                    roomsExchanges.add(i);
+                    JButton b = new JButton(i.substring(11));
+                    b.setFocusable(false);
+                    b.setForeground(Color.white);
+                    b.setBackground(new Color (0x6b6f80));
+                    b.setBounds(30,20+50*rooms.size(), 200, 40);
+                    b.addActionListener(e1->{
+                        if(field.isEditable() == false){
+                            field.setEditable(true);
+                            b.setBackground(Color.green);
+                            currentRoom = b;
+                            field.grabFocus();
+                        }else{
+                            if(currentRoom == b){
+                                field.setEditable(false);
+                                b.setBackground(new Color (0x6b6f80));
+                                currentRoom = null;
+                            }else{
+                                currentRoom.setBackground(new Color (0x6b6f80));
+                                b.setBackground(Color.green);
+                                currentRoom = b;
+                            }
+                        }
+                    });
+                    rooms.add(b);
+                    roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
+                    roomsPan.add(b);
+                }
+            }
+        });
         // thirdBock
         thirdBlock = new JPanel();
         thirdBlock.setLayout(new BorderLayout());

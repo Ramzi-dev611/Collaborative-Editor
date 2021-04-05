@@ -64,7 +64,7 @@ public class WelcomeFrame extends JFrame implements FocusListener {
                 queueName.grabFocus();
             }
             else{
-                new Sender(queueName.getText(), "");
+                new Sender(queueName.getText());
             }
         });
         signIn.setBounds(320, 400,120,50);

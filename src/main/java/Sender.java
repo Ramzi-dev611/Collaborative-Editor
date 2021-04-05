@@ -21,6 +21,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
     protected JPanel thirdBlock;
     protected ArrayList<String> roomsExchanges;
     protected ArrayList <JButton> rooms;
+    protected JPanel roomsPan;
     protected JTextField insertion;
     protected JButton submition;
     protected JButton refresh;
@@ -31,7 +32,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
     public Sender(String name){
         this.name = name;
         snd = new SendProcess("application"+name);
-        rooms = new ArrayList<JButton>();
+        rooms = new ArrayList<JButton>(0);
         roomsExchanges = snd.getExchanges();
         constructZone1();
         constructZone2();
@@ -78,6 +79,52 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
         submition.setForeground(Color.white);
         submition.setFocusable(false);
         submition.setBounds(230, 80,75,40);
+        submition.addActionListener(e -> {
+            if (insertion.getText().equals("") || insertion.getText().equals("Name your new room")){
+                insertion.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+                insertion.grabFocus();
+            }else {
+                snd.exchangeDeclaration("application"+insertion.getText());
+                roomsExchanges.add("application"+insertion.getText());
+                JButton b = new JButton(insertion.getText());
+                b.setFocusable(false);
+                b.setForeground(Color.white);
+                b.setBackground(new Color (0x6b6f80));
+                b.setBounds(30,20+50*rooms.size(), 200, 40);
+                b.addActionListener(e1->{
+                    if(field.isEditable() == false){
+                        field.setEditable(true);
+                        b.setBackground(Color.green);
+                        currentRoom = b;
+                        field.grabFocus();
+                    }else{
+                        if(currentRoom == b){
+                            field.setEditable(false);
+                            b.setBackground(new Color (0x6b6f80));
+                            currentRoom = null;
+                        }else{
+                            currentRoom.setBackground(new Color (0x6b6f80));
+                            b.setBackground(Color.green);
+                            currentRoom = b;
+                        }
+                    }
+                });
+                rooms.add(b);
+                roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
+                insertion.setForeground(Color.gray);
+                insertion.setText("Name your new room");
+                if(currentRoom!= null){
+                    currentRoom.setBackground(new Color (0x6b6f80));
+                    snd.unbindFromExchange(currentRoom.getText());
+                }
+                b.setBackground(Color.GREEN);
+                currentRoom= b;
+                snd.bindToExchange("application"+currentRoom.getText());
+                field.setEditable(true);
+                field.grabFocus();
+                roomsPan.add(b);
+            }
+        });
         //firstBlock
         firstBlock = new JPanel();
         firstBlock.setBackground(new Color(0xb3ffb3));
@@ -92,7 +139,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
         lab2.setFont(new Font("Helvetica", Font.ITALIC, 16));
         lab2.setBounds(10,0, 300, 50 );
 
-        JPanel roomsPan = new JPanel();
+        roomsPan = new JPanel();
         roomsPan.setBackground(new Color(0xb3ffb3));
         roomsPan.setLayout(null);
         roomsPan.setPreferredSize(new Dimension(200,roomsExchanges.size()*53));
@@ -113,14 +160,18 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                     if(currentRoom == b){
                         field.setEditable(false);
                         b.setBackground(new Color (0x6b6f80));
+                        snd.unbindFromExchange("application"+b.getText());
                         currentRoom = null;
                     }else{
                         currentRoom.setBackground(new Color (0x6b6f80));
+                        snd.unbindFromExchange("application"+currentRoom.getText());
                         b.setBackground(Color.green);
                         currentRoom = b;
+                        snd.bindToExchange("application"+b.getText());
                     }
                 }
             });
+            rooms.add(b);
             roomsPan.add(b);
         }
         JScrollPane scrollPane = new JScrollPane(roomsPan);
@@ -185,6 +236,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
     @Override
     public void focusLost(FocusEvent e) {
         if(e.getSource()==insertion){
+            insertion.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
             if(insertion.getText().equals("")){
                 insertion.setText("Name your new room");
                 insertion.setForeground(Color.gray);

@@ -1,3 +1,4 @@
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -23,11 +24,37 @@ public class SendProcess {
             e.printStackTrace();
         }
     }
-    public  SendProcess(){ }
+
     public void send(String message){
         try{
             Channel channel = connection.createChannel();
             channel.basicPublish("", queue, null, message.getBytes());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void exchangeDeclaration(String exchange){
+        try{
+            Channel channel = connection.createChannel();
+            channel.exchangeDeclare(exchange, "fanout");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void bindToExchange(String exchange){
+        try{
+            Channel channel = connection.createChannel();
+            channel.queueBind(queue, exchange ,"");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void unbindFromExchange(String exchange){
+        try{
+            Channel channel = connection.createChannel();
+            channel.queueUnbind(queue, exchange ,"");
         }catch (Exception e){
             e.printStackTrace();
         }

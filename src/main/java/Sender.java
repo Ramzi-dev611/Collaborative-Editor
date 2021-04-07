@@ -3,11 +3,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Sender extends JFrame implements FocusListener, DocumentListener {
+public class Sender extends JFrame implements FocusListener, DocumentListener, KeyListener {
     protected SendProcess snd;
     protected String name;
     // zone north
@@ -97,18 +96,24 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                         field.setEditable(true);
                         b.setBackground(Color.green);
                         currentRoom = b;
-                        field.grabFocus();
+                        snd.bindToExchange("application"+currentRoom.getText());
+                        snd.recieve(field);
                     }else{
                         if(currentRoom == b){
                             field.setEditable(false);
                             b.setBackground(new Color (0x6b6f80));
+                            snd.unbindFromExchange("application"+b.getText());
                             currentRoom = null;
                         }else{
                             currentRoom.setBackground(new Color (0x6b6f80));
+                            snd.unbindFromExchange("application"+currentRoom.getText());
                             b.setBackground(Color.green);
                             currentRoom = b;
+                            snd.bindToExchange("application"+b.getText());
+                            snd.recieve(field);
                         }
                     }
+                    field.grabFocus();
                 });
                 rooms.add(b);
                 roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
@@ -121,6 +126,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                 b.setBackground(Color.GREEN);
                 currentRoom= b;
                 snd.bindToExchange("application"+currentRoom.getText());
+                snd.recieve(field);
                 field.setEditable(true);
                 field.grabFocus();
                 roomsPan.add(b);
@@ -156,6 +162,8 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                     field.setEditable(true);
                     b.setBackground(Color.green);
                     currentRoom = b;
+                    snd.bindToExchange("application"+currentRoom.getText());
+                    snd.recieve(field);
                 }else{
                     if(currentRoom == b){
                         field.setEditable(false);
@@ -168,6 +176,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                         b.setBackground(Color.green);
                         currentRoom = b;
                         snd.bindToExchange("application"+b.getText());
+                        snd.recieve(field);
                     }
                 }
                 field.grabFocus();
@@ -208,18 +217,24 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
                             field.setEditable(true);
                             b.setBackground(Color.green);
                             currentRoom = b;
-                            field.grabFocus();
+                            snd.bindToExchange("application"+currentRoom.getText());
+                            snd.recieve(field);
                         }else{
                             if(currentRoom == b){
                                 field.setEditable(false);
                                 b.setBackground(new Color (0x6b6f80));
+                                snd.unbindFromExchange("application"+b.getText());
                                 currentRoom = null;
                             }else{
                                 currentRoom.setBackground(new Color (0x6b6f80));
+                                snd.unbindFromExchange("application"+currentRoom.getText());
                                 b.setBackground(Color.green);
                                 currentRoom = b;
+                                snd.bindToExchange("application"+b.getText());
+                                snd.recieve(field);
                             }
                         }
+                        field.grabFocus();
                     });
                     rooms.add(b);
                     roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
@@ -248,7 +263,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
         field.setFont(new Font("Helvetica",Font.PLAIN, 25));
         field.setEditable(false);
         field.setLineWrap(true);
-        field.getDocument().addDocumentListener(this);
+        field.addKeyListener(this);
         JScrollPane scroll1 = new JScrollPane(field);
         scroll1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         pan3.setBorder(new EmptyBorder(15,15,15,15));
@@ -282,23 +297,41 @@ public class Sender extends JFrame implements FocusListener, DocumentListener {
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-            String message = field.getText();
-            snd.send(message);
+//        if(e.){
+//            String message = field.getText();
+//            snd.send(message, "application" + currentRoom.getText());
+//        }
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-            String message = field.getText();
-            snd.send(message);
+//            String message = field.getText();
+//            snd.send(message, "application"+currentRoom.getText());
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        if(e.getDocument() == field){
-            String message = field.getText();
-            snd.send(message);
-        }
+//        if(e.getDocument() == field){
+//            String message = field.getText();
+//            snd.send(message, "application"+currentRoom.getText());
+//        }
     }
 
     public static void main (String []args){ new Sender(""); }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (field.isEditable() && field.hasFocus()){
+            String message = field.getText();
+            snd.send(message, "application" + currentRoom.getText());
+        }
+    }
 }

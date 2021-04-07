@@ -1,7 +1,6 @@
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
+
+import javax.swing.*;
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -25,10 +24,10 @@ public class SendProcess {
         }
     }
 
-    public void send(String message){
+    public void send(String message, String exchange){
         try{
             Channel channel = connection.createChannel();
-            channel.basicPublish("", queue, null, message.getBytes());
+            channel.basicPublish(exchange, "", null, message.getBytes());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -89,5 +88,19 @@ public class SendProcess {
         }catch (Exception e){
             e.printStackTrace();}
         return queues;
+    }
+
+    public void recieve(JTextArea field){
+        try{
+            Channel channel = connection.createChannel();
+            DeliverCallback callBack = (tag, delivery) ->{
+              String message = new String(delivery.getBody(), "UTF-8");
+              field.setText(message);
+            };
+            channel.basicConsume(queue, true, callBack, tag->{});
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

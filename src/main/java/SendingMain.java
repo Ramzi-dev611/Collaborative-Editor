@@ -1,8 +1,7 @@
 public class SendingMain {
     public static void main (String args []){
-        new WelcomeFrame();
-        new WelcomeFrame();
-        new WelcomeFrame();
+        new Sender("Sender1");
+        new Sender("Sender2");
     }
 
 }

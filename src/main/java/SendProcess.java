@@ -91,13 +91,12 @@ public class SendProcess {
         return queues;
     }
 
-    public void recieve(JTextArea field, int position){
+    public void recieve(JTextArea field){
         try{
             Channel channel = connection.createChannel();
             DeliverCallback callBack = (tag, delivery) ->{
               String message = new String(delivery.getBody(), "UTF-8");
               field.setText(message);
-              field.setCaretPosition(position);
             };
             channel.basicConsume(queue, true, callBack, tag->{});
         }catch (Exception e){

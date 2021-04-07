@@ -50,6 +50,7 @@ public class SendProcess {
             e.printStackTrace();
         }
     }
+
     public void unbindFromExchange(String exchange){
         try{
             Channel channel = connection.createChannel();
@@ -90,12 +91,13 @@ public class SendProcess {
         return queues;
     }
 
-    public void recieve(JTextArea field){
+    public void recieve(JTextArea field, int position){
         try{
             Channel channel = connection.createChannel();
             DeliverCallback callBack = (tag, delivery) ->{
               String message = new String(delivery.getBody(), "UTF-8");
               field.setText(message);
+              field.setCaretPosition(position);
             };
             channel.basicConsume(queue, true, callBack, tag->{});
         }catch (Exception e){

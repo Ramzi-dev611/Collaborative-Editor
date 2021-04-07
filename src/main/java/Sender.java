@@ -6,28 +6,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Sender extends JFrame implements FocusListener, DocumentListener, KeyListener {
-    protected SendProcess snd;
-    protected String name;
+public class Sender extends JFrame implements FocusListener, KeyListener {
+    protected SendProcess snd; protected String name; protected int position =0;
     // zone north
-    protected JPanel pan1;
-    protected JLabel title;
-    protected JLabel logo;
+    protected JPanel pan1; protected JLabel title; protected JLabel logo;
     // zone east
-    protected JPanel pan2;
-    protected JPanel firstBlock;
-    protected JPanel secondBlock;
-    protected JPanel thirdBlock;
-    protected ArrayList<String> roomsExchanges;
-    protected ArrayList <JButton> rooms;
-    protected JPanel roomsPan;
-    protected JTextField insertion;
-    protected JButton submition;
-    protected JButton refresh;
+    protected JPanel pan2; protected JPanel firstBlock; protected JPanel secondBlock; protected JPanel thirdBlock;
+    protected ArrayList<String> roomsExchanges; protected ArrayList <JButton> rooms; protected JPanel roomsPan;
+    protected JTextField insertion; protected JButton submition; protected JButton refresh;
     protected JButton currentRoom;
     // zone center
-    protected JPanel pan3;
-    protected JTextArea field;
+    protected JPanel pan3; protected JTextArea field;
+
     public Sender(String name){
         this.name = name;
         snd = new SendProcess("application"+name);
@@ -79,59 +69,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener, K
         submition.setForeground(Color.white);
         submition.setFocusable(false);
         submition.setBounds(230, 80,75,40);
-        submition.addActionListener(e -> {
-            if (insertion.getText().equals("") || insertion.getText().equals("Name your new room")){
-                insertion.setBorder(BorderFactory.createLineBorder(Color.red, 1));
-                insertion.grabFocus();
-            }else {
-                snd.exchangeDeclaration("application"+insertion.getText());
-                roomsExchanges.add("application"+insertion.getText());
-                JButton b = new JButton(insertion.getText());
-                b.setFocusable(false);
-                b.setForeground(Color.white);
-                b.setBackground(new Color (0x6b6f80));
-                b.setBounds(30,20+50*rooms.size(), 200, 40);
-                b.addActionListener(e1->{
-                    if(field.isEditable() == false){
-                        field.setEditable(true);
-                        b.setBackground(Color.green);
-                        currentRoom = b;
-                        snd.bindToExchange("application"+currentRoom.getText());
-                        snd.recieve(field);
-                    }else{
-                        if(currentRoom == b){
-                            field.setEditable(false);
-                            b.setBackground(new Color (0x6b6f80));
-                            snd.unbindFromExchange("application"+b.getText());
-                            currentRoom = null;
-                        }else{
-                            currentRoom.setBackground(new Color (0x6b6f80));
-                            snd.unbindFromExchange("application"+currentRoom.getText());
-                            b.setBackground(Color.green);
-                            currentRoom = b;
-                            snd.bindToExchange("application"+b.getText());
-                            snd.recieve(field);
-                        }
-                    }
-                    field.grabFocus();
-                });
-                rooms.add(b);
-                roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
-                insertion.setForeground(Color.gray);
-                insertion.setText("Name your new room");
-                if(currentRoom!= null){
-                    currentRoom.setBackground(new Color (0x6b6f80));
-                    snd.unbindFromExchange(currentRoom.getText());
-                }
-                b.setBackground(Color.GREEN);
-                currentRoom= b;
-                snd.bindToExchange("application"+currentRoom.getText());
-                snd.recieve(field);
-                field.setEditable(true);
-                field.grabFocus();
-                roomsPan.add(b);
-            }
-        });
+        submition.addActionListener(e -> submissionEvent(e));
         //firstBlock
         firstBlock = new JPanel();
         firstBlock.setBackground(new Color(0xb3ffb3));
@@ -157,30 +95,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener, K
             b.setForeground(Color.white);
             b.setBackground(new Color (0x6b6f80));
             b.setBounds(30,20+50*i, 200, 40);
-            b.addActionListener(e->{
-                if(field.isEditable() == false){
-                    field.setEditable(true);
-                    b.setBackground(Color.green);
-                    currentRoom = b;
-                    snd.bindToExchange("application"+currentRoom.getText());
-                    snd.recieve(field);
-                }else{
-                    if(currentRoom == b){
-                        field.setEditable(false);
-                        b.setBackground(new Color (0x6b6f80));
-                        snd.unbindFromExchange("application"+b.getText());
-                        currentRoom = null;
-                    }else{
-                        currentRoom.setBackground(new Color (0x6b6f80));
-                        snd.unbindFromExchange("application"+currentRoom.getText());
-                        b.setBackground(Color.green);
-                        currentRoom = b;
-                        snd.bindToExchange("application"+b.getText());
-                        snd.recieve(field);
-                    }
-                }
-                field.grabFocus();
-            });
+            b.addActionListener(e->newRoomEvent(e, b));
             rooms.add(b);
             roomsPan.add(b);
         }
@@ -202,46 +117,7 @@ public class Sender extends JFrame implements FocusListener, DocumentListener, K
         refresh.setBackground(Color.red);
         refresh.setForeground(Color.white);
         refresh.setFocusable(false);
-        refresh.addActionListener(e->{
-            ArrayList<String> tmp = snd.getExchanges();
-            for (String i : tmp){
-                if(!roomsExchanges.contains(i)){
-                    roomsExchanges.add(i);
-                    JButton b = new JButton(i.substring(11));
-                    b.setFocusable(false);
-                    b.setForeground(Color.white);
-                    b.setBackground(new Color (0x6b6f80));
-                    b.setBounds(30,20+50*rooms.size(), 200, 40);
-                    b.addActionListener(e1->{
-                        if(field.isEditable() == false){
-                            field.setEditable(true);
-                            b.setBackground(Color.green);
-                            currentRoom = b;
-                            snd.bindToExchange("application"+currentRoom.getText());
-                            snd.recieve(field);
-                        }else{
-                            if(currentRoom == b){
-                                field.setEditable(false);
-                                b.setBackground(new Color (0x6b6f80));
-                                snd.unbindFromExchange("application"+b.getText());
-                                currentRoom = null;
-                            }else{
-                                currentRoom.setBackground(new Color (0x6b6f80));
-                                snd.unbindFromExchange("application"+currentRoom.getText());
-                                b.setBackground(Color.green);
-                                currentRoom = b;
-                                snd.bindToExchange("application"+b.getText());
-                                snd.recieve(field);
-                            }
-                        }
-                        field.grabFocus();
-                    });
-                    rooms.add(b);
-                    roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
-                    roomsPan.add(b);
-                }
-            }
-        });
+        refresh.addActionListener(e->refreshActionEvent(e));
         // thirdBock
         thirdBlock = new JPanel();
         thirdBlock.setLayout(new BorderLayout());
@@ -294,44 +170,96 @@ public class Sender extends JFrame implements FocusListener, DocumentListener, K
 
     }
 
+    @Override
+    public void keyTyped(KeyEvent e) { }
 
     @Override
-    public void insertUpdate(DocumentEvent e) {
-//        if(e.){
-//            String message = field.getText();
-//            snd.send(message, "application" + currentRoom.getText());
-//        }
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-//            String message = field.getText();
-//            snd.send(message, "application"+currentRoom.getText());
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-//        if(e.getDocument() == field){
-//            String message = field.getText();
-//            snd.send(message, "application"+currentRoom.getText());
-//        }
-    }
-
-    public static void main (String []args){ new Sender(""); }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-    }
+    public void keyPressed(KeyEvent e) { }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (field.isEditable() && field.hasFocus()){
-            String message = field.getText();
-            snd.send(message, "application" + currentRoom.getText());
+        if (e.getKeyCode()== KeyEvent.VK_DELETE || e.getKeyCode() <= KeyEvent.VK_ALPHANUMERIC){
+            if (field.isEditable() && field.hasFocus()) {
+                String message = field.getText();
+                position = field.getCaretPosition();
+                snd.send(message, "application" + currentRoom.getText());
+            }
         }
     }
+
+    public void submissionEvent(ActionEvent e){
+        if (insertion.getText().equals("") || insertion.getText().equals("Name your new room")){
+            insertion.setBorder(BorderFactory.createLineBorder(Color.red, 1));
+            insertion.grabFocus();
+        }else {
+            snd.exchangeDeclaration("application"+insertion.getText());
+            roomsExchanges.add("application"+insertion.getText());
+            JButton b = new JButton(insertion.getText());
+            b.setFocusable(false);
+            b.setForeground(Color.white);
+            b.setBackground(new Color (0x6b6f80));
+            b.setBounds(30,20+50*rooms.size(), 200, 40);
+            b.addActionListener(e1->newRoomEvent(e, b));
+            rooms.add(b);
+            roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
+            insertion.setForeground(Color.gray);
+            insertion.setText("Name your new room");
+            if(currentRoom!= null){
+                currentRoom.setBackground(new Color (0x6b6f80));
+                snd.unbindFromExchange(currentRoom.getText());
+            }
+            b.setBackground(Color.GREEN);
+            currentRoom= b;
+            snd.bindToExchange("application"+currentRoom.getText());
+            snd.recieve(field, position);
+            field.setEditable(true);
+            field.grabFocus();
+            roomsPan.add(b);
+        }
+    }
+
+    public void newRoomEvent (ActionEvent e, JButton b){
+        if(field.isEditable() == false){
+            field.setEditable(true);
+            b.setBackground(Color.green);
+            currentRoom = b;
+            snd.bindToExchange("application"+currentRoom.getText());
+            snd.recieve(field, position);
+        }else{
+            if(currentRoom == b){
+                field.setEditable(false);
+                b.setBackground(new Color (0x6b6f80));
+                snd.unbindFromExchange("application"+b.getText());
+                currentRoom = null;
+            }else{
+                currentRoom.setBackground(new Color (0x6b6f80));
+                snd.unbindFromExchange("application"+currentRoom.getText());
+                b.setBackground(Color.green);
+                currentRoom = b;
+                snd.bindToExchange("application"+b.getText());
+                snd.recieve(field, position);
+            }
+        }
+        field.grabFocus();
+    }
+
+    public void refreshActionEvent (ActionEvent e){
+        ArrayList<String> tmp = snd.getExchanges();
+        for (String i : tmp){
+            if(!roomsExchanges.contains(i)){
+                roomsExchanges.add(i);
+                JButton b = new JButton(i.substring(11));
+                b.setFocusable(false);
+                b.setForeground(Color.white);
+                b.setBackground(new Color (0x6b6f80));
+                b.setBounds(30,20+50*rooms.size(), 200, 40);
+                b.addActionListener(e1->newRoomEvent(e , b));
+                rooms.add(b);
+                roomsPan.setPreferredSize(new Dimension(200, 53*roomsExchanges.size()));
+                roomsPan.add(b);
+            }
+        }
+    }
+
+    public static void main (String []args){ new Sender(""); }
 }
